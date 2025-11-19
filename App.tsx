@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { GameState, HexCell, TerrainType, Weather, SpeciesStats, EcologicalReport, SpeciesType } from './types';
+import React, { useState } from 'react';
+import { GameState, HexCell, TerrainType, Weather, SpeciesStats, SpeciesType } from './types';
 import { SPECIES_DATA, MAP_RADIUS, MAX_DAYS, START_ENERGY, WEATHER_EFFECTS } from './constants';
 import { SpeciesCard } from './components/SpeciesCard';
 import { HexGrid } from './components/HexGrid';
 import { HUD } from './components/HUD';
 import { EventLog } from './components/EventLog';
-import { generateEcologicalReport } from './services/geminiService';
-import { BookOpen, RotateCcw, Loader2, ShieldAlert, Trophy, Baby } from 'lucide-react';
+import { RotateCcw, ShieldAlert, Trophy, Baby } from 'lucide-react';
 
 // --- Helpers ---
 
@@ -129,9 +128,6 @@ export default function App() {
     map: new Map()
   });
 
-  const [report, setReport] = useState<EcologicalReport | null>(null);
-  const [loadingReport, setLoadingReport] = useState(false);
-
   // --- Actions ---
 
   const startGame = (species: SpeciesStats) => {
@@ -151,7 +147,6 @@ export default function App() {
       },
       map: createMap()
     });
-    setReport(null);
   };
 
   const addLog = (msg: string) => {
@@ -364,22 +359,6 @@ export default function App() {
     });
   };
 
-  useEffect(() => {
-    if (gameState.status === 'GAME_OVER' && !report && !loadingReport && gameState.species) {
-        setLoadingReport(true);
-        generateEcologicalReport(
-            gameState.species.name,
-            gameState.day,
-            gameState.player.pollen,
-            gameState.player.history,
-            gameState.player.deathReason
-        ).then(r => {
-            setReport(r);
-            setLoadingReport(false);
-        });
-    }
-  }, [gameState.status, gameState.species]);
-
   // --- Rendering ---
 
   if (gameState.status === 'MENU') {
@@ -476,41 +455,13 @@ export default function App() {
                 )}
             </div>
 
-            {/* AI Report Section */}
-            <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6 text-left">
-                <h3 className="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2">
-                    <BookOpen className="w-5 h-5" />
-                    Ecological Analysis
-                </h3>
-                
-                {loadingReport ? (
-                    <div className="flex items-center justify-center py-8 text-slate-500 gap-3">
-                        <Loader2 className="w-6 h-6 animate-spin" />
-                        Generating report from Professor Gemini...
-                    </div>
-                ) : report ? (
-                    <div className="space-y-4 text-slate-300 text-sm leading-relaxed">
-                        <div>
-                            <strong className="text-slate-100 block mb-1">Survival Factors:</strong>
-                            {report.survivalAnalysis}
-                        </div>
-                        <div>
-                            <strong className="text-slate-100 block mb-1">Strategy Evaluation:</strong>
-                            {report.strategyFeedback}
-                        </div>
-                        <div className="pt-4 border-t border-slate-700 flex justify-between items-center">
-                            <span>Biological Success Score:</span>
-                            <span className="text-2xl font-bold text-blue-400">{report.score}/100</span>
-                        </div>
-                    </div>
-                ) : (
-                    <p className="text-red-400">Analysis unavailable.</p>
-                )}
+            <div className="text-slate-400 italic text-sm mb-6">
+                Please record these values for your practical worksheet.
             </div>
 
             <button 
                 onClick={() => setGameState(prev => ({...prev, status: 'MENU'}))}
-                className="mt-8 bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 px-8 rounded-full transition-all flex items-center gap-2 mx-auto"
+                className="mt-2 bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 px-8 rounded-full transition-all flex items-center gap-2 mx-auto"
             >
                 <RotateCcw className="w-5 h-5" />
                 New Simulation
