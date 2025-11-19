@@ -6,7 +6,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   return {
     plugins: [react()],
-    base: './', // CRITICAL: Allows the app to run in a subdirectory on GitHub Pages
+    base: '/pollinator-hex/', // Matches your repo name https://benclunie.github.io/pollinator-hex/
     build: {
       outDir: 'dist',
     },
