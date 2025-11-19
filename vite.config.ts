@@ -1,0 +1,17 @@
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
+
+// https://vitejs.dev/config/
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  return {
+    plugins: [react()],
+    base: './', // CRITICAL: Allows the app to run in a subdirectory on GitHub Pages
+    build: {
+      outDir: 'dist',
+    },
+    define: {
+      'process.env.API_KEY': JSON.stringify(env.API_KEY)
+    }
+  };
+});

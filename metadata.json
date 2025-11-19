@@ -1,0 +1,5 @@
+{
+  "name": "Pollinator: Ecology & Evolution",
+  "description": "An interactive simulation for zoology undergraduates to explore foraging strategies, trade-offs, and survival in fragmented landscapes.",
+  "requestFramePermissions": []
+}
