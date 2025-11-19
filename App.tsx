@@ -267,6 +267,23 @@ export default function App() {
     // Resource Calculation
     const weatherMult = WEATHER_EFFECTS[weather].resourceMult;
     let amount = cell.resourceQuality * species.forageEfficiency * weatherMult * 0.1; // Scale down
+    
+    // --- CROP YIELD BONUS ---
+    let extraLog = "";
+    let extraEnergy = 0;
+
+    if (cell.type === TerrainType.CROP) {
+        amount = amount * 1.5; // 50% Yield Bonus
+        extraEnergy = 5; // "Sugar Rush" from abundant nectar
+        extraLog = " High yield crop!";
+
+        // --- HOVERFLY BIO-CONTROL BONUS ---
+        if (species.name === SpeciesType.HOVERFLY) {
+            amount += 15; // Significant bonus
+            extraLog = " Bio-control bonus (aphids eaten)!";
+        }
+    }
+    
     amount = Math.floor(amount);
 
     // Toxicity Calculation (Foraging/Ingestion)
@@ -283,7 +300,8 @@ export default function App() {
     const newMap = new Map<string, HexCell>(map);
     newMap.set(cellKey, { ...cell, hasForagedToday: true });
 
-    let newEnergy = player.energy - forageCost + (amount * 0.5); // Get some immediate energy from nectar
+    // Energy calc: Cost + Immediate Gain (Nectar) + Sugar Rush (if crop)
+    let newEnergy = player.energy - forageCost + (amount * 0.5) + extraEnergy;
     newEnergy = Math.min(newEnergy, species.maxEnergy);
     const newToxicity = player.toxicity + addedToxicity;
 
@@ -300,9 +318,9 @@ export default function App() {
 
     // Log message based on species
     if (species.name === SpeciesType.HOVERFLY) {
-         addLog(`Fed on nectar.${toxicityMsg}`);
+         addLog(`Fed on nectar.${toxicityMsg}${extraLog}`);
     } else {
-         addLog(`Collected ${amount} pollen.${toxicityMsg}`);
+         addLog(`Collected ${amount} pollen.${toxicityMsg}${extraLog}`);
     }
     
     checkDeath(newEnergy, newToxicity, species, "Starvation");
@@ -317,11 +335,11 @@ export default function App() {
     let logMsg = "Night falls. ";
 
     if (isAtNest) {
-        energyChange += 20; 
-        logMsg += "Safe in nest/shelter.";
+        energyChange += 50; // Significantly increased from 20 to make resting worth it
+        logMsg += "Restored energy in safety of nest.";
     } else {
-        energyChange -= 10; 
-        logMsg += "Exposed to elements overnight.";
+        energyChange -= 5; // Reduced penalty (was -10)
+        logMsg += "Rough sleep exposed to elements.";
         if (Math.random() > 0.85) {
              checkDeath(0, gameState.player.toxicity, gameState.species, "Predation during night");
              return;

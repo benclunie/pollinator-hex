@@ -32,22 +32,22 @@ export const SPECIES_DATA: Record<SpeciesType, SpeciesStats> = {
   },
   [SpeciesType.HOVERFLY]: {
     name: SpeciesType.HOVERFLY,
-    description: "Mimicry master. Feeds on nectar for energy to lay eggs. Pollinates passively.",
+    description: "Mimicry master. Larvae are bio-control agents (eat aphids). High pesticide tolerance.",
     maxEnergy: 100,
     energyCostMove: 4,
     energyCostForage: 4,
     forageEfficiency: 0.8,
-    pesticideResilience: 0.7,
-    maxToxicity: 30,
+    pesticideResilience: 0.85, // Increased from 0.7 for higher tolerance
+    maxToxicity: 30, // Low max threshold, but fills up very slowly due to resilience
     flightRange: 4,
-    traits: ["Mimicry", "Generalist", "Mobile"]
+    traits: ["Bio-Control Agent", "Generalist", "Mobile"]
   }
 };
 
 export const TERRAIN_CONFIG: Record<TerrainType, { color: string, label: string, risk: string, resources: string }> = {
   [TerrainType.MEADOW]: { color: '#a3e635', label: 'Wildflower Meadow', risk: 'Low', resources: 'High' },
   [TerrainType.FOREST]: { color: '#166534', label: 'Ancient Woodland', risk: 'Low', resources: 'Medium' },
-  [TerrainType.CROP]: { color: '#eab308', label: 'Monoculture Crop', risk: 'High (Pesticides)', resources: 'High (Seasonal)' },
+  [TerrainType.CROP]: { color: '#eab308', label: 'Mass Flowering Crop', risk: 'High (Pesticides)', resources: 'Abundant (Bonus)' },
   [TerrainType.URBAN]: { color: '#64748b', label: 'Urban Gardens', risk: 'Medium', resources: 'Variable' },
   [TerrainType.WATER]: { color: '#3b82f6', label: 'Water Body', risk: 'Drowning', resources: 'None' },
   [TerrainType.ROAD]: { color: '#94a3b8', label: 'Paved Road', risk: 'Medium (Collision)', resources: 'None' },
