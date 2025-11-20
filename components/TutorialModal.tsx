@@ -46,7 +46,7 @@ export const TutorialModal: React.FC<Props> = ({ isOpen, onClose }) => {
               <ul className="text-sm space-y-2 list-disc pl-4 text-slate-400">
                 <li><strong>Movement:</strong> Flying costs energy based on distance.</li>
                 <li><strong>Foraging:</strong> Costs energy but yields resources.</li>
-                <li><strong>Resting:</strong> Returning to the <span className="text-emerald-400">Nest</span> restores significant energy (+50). Sleeping outside restores little and risks predation.</li>
+                <li><strong>Resting:</strong> Returning to the <span className="text-emerald-400">Nest</span> restores significant energy (+50). Sleeping outside restores little (+15) and risks predation.</li>
               </ul>
             </div>
 
@@ -68,18 +68,34 @@ export const TutorialModal: React.FC<Props> = ({ isOpen, onClose }) => {
               <Flower className="w-5 h-5 text-pink-400" />
               Landscape Ecology
             </h3>
-            <div className="grid gap-3 text-sm">
+            <div className="grid gap-3 text-sm md:grid-cols-2">
                 <div className="flex gap-3 items-start">
-                    <span className="bg-yellow-600/20 text-yellow-500 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1">CROPS</span>
-                    <p>High resource yield ("Sugar Rush" bonus) but high pesticide risk. <br/><span className="text-cyan-400 italic">Hoverflies gain a Bio-Control Bonus here.</span></p>
+                    <span className="bg-emerald-600/20 text-emerald-500 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1 min-w-[60px] text-center">MEADOW</span>
+                    <p>Safe, reliable resources (High). Low risk. The standard foraging ground.</p>
                 </div>
                 <div className="flex gap-3 items-start">
-                    <span className="bg-emerald-600/20 text-emerald-500 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1">MEADOW</span>
-                    <p>Safe, reliable resources. Low risk.</p>
+                    <span className="bg-green-800/20 text-green-400 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1 min-w-[60px] text-center">FOREST</span>
+                    <p>Ancient Woodland. Medium resources, very low risk. Good for safe travel.</p>
                 </div>
                 <div className="flex gap-3 items-start">
-                    <span className="bg-slate-700 text-slate-300 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1">ROADS</span>
-                    <p>Fragment the landscape. No resources. High collision risk.</p>
+                    <span className="bg-yellow-600/20 text-yellow-500 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1 min-w-[60px] text-center">CROPS</span>
+                    <p>High yield ("Sugar Rush") but high pesticide risk. <br/><span className="text-cyan-400 italic">Hoverflies gain a Bio-Control Bonus here.</span></p>
+                </div>
+                <div className="flex gap-3 items-start">
+                    <span className="bg-slate-600/40 text-slate-300 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1 min-w-[60px] text-center">URBAN</span>
+                    <p>Gardens. Variable resources. Medium pesticide risk from garden chemicals.</p>
+                </div>
+                 <div className="flex gap-3 items-start">
+                    <span className="bg-amber-900/40 text-amber-600 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1 min-w-[60px] text-center">NEST</span>
+                    <p>Your home. No resources, but allows for full energy recovery (+50).</p>
+                </div>
+                <div className="flex gap-3 items-start">
+                    <span className="bg-blue-900/40 text-blue-400 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1 min-w-[60px] text-center">WATER</span>
+                    <p>Water bodies. Zero resources. Risk of drowning or exhaustion.</p>
+                </div>
+                <div className="flex gap-3 items-start md:col-span-2">
+                    <span className="bg-slate-700 text-slate-400 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1 min-w-[60px] text-center">ROADS</span>
+                    <p>Fragment the landscape. No resources. High collision risk (25% chance of severe injury).</p>
                 </div>
             </div>
           </section>
