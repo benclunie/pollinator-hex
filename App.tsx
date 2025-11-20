@@ -352,15 +352,15 @@ export default function App() {
     
     const isAtNest = gameState.player.q === 0 && gameState.player.r === 0;
     
-    let energyChange = -5; 
+    let energyChange = 0;
     let logMsg = "Night falls. ";
 
     if (isAtNest) {
-        energyChange += 50; // Significantly increased from 20 to make resting worth it
+        energyChange = 50; // Significantly increased
         logMsg += "Restored energy in safety of nest.";
     } else {
-        energyChange -= 5; // Reduced penalty (was -10)
-        logMsg += "Rough sleep exposed to elements.";
+        energyChange = 15; // Changed from -5 to +15 to reward rough sleeping
+        logMsg += "Rested in the open (recovered some energy).";
         if (Math.random() > 0.85) {
              checkDeath(0, gameState.player.toxicity, gameState.species, "Predation during night");
              return;
@@ -369,8 +369,8 @@ export default function App() {
 
     const newEnergy = Math.min(gameState.player.energy + energyChange, gameState.species.maxEnergy);
     
-    if (checkDeath(newEnergy, gameState.player.toxicity, gameState.species, "Starved during the night")) return;
-
+    // Removed starvation check here as we are now gaining energy in both cases
+    
     if (gameState.day >= MAX_DAYS) {
         setGameState(prev => ({ ...prev, status: 'GAME_OVER', player: { ...prev.player, energy: newEnergy } }));
         return;

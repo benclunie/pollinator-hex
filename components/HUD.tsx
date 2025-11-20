@@ -258,11 +258,11 @@ export const HUD: React.FC<Props> = ({ gameState, currentHex, onForage, onRest, 
                           <button 
                               onClick={onRest}
                               className="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-3 px-4 rounded-lg shadow-lg flex flex-col items-center justify-center"
-                              title="Rest/Wait (Small energy cost)"
+                              title="Rest/Recover (Small energy gain)"
                           >
                               <div className="flex items-center gap-2">
                                 <Battery className="w-5 h-5" />
-                                <span>Wait</span>
+                                <span>Rest</span>
                               </div>
                           </button>
                       </>
@@ -273,4 +273,4 @@ export const HUD: React.FC<Props> = ({ gameState, currentHex, onForage, onRest, 
       </div>
     </>
   );
-};
+}
