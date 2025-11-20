@@ -91,7 +91,7 @@ export const TutorialModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 </div>
                 <div className="flex gap-3 items-start">
                     <span className="bg-blue-900/40 text-blue-400 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1 min-w-[60px] text-center">WATER</span>
-                    <p>Water bodies. Zero resources. Risk of drowning or exhaustion.</p>
+                    <p>No food, but visiting provides a <strong>Hydration Boost</strong> (+Energy, -Toxicity).</p>
                 </div>
                 <div className="flex gap-3 items-start md:col-span-2">
                     <span className="bg-slate-700 text-slate-400 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1 min-w-[60px] text-center">ROADS</span>

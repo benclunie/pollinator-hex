@@ -237,6 +237,15 @@ export default function App() {
         }
     }
 
+    // Hydration Boost Logic (Water)
+    let hydrationEnergy = 0;
+    let hydrationDetox = 0;
+    if (targetCell && targetCell.type === TerrainType.WATER) {
+        hydrationEnergy = 10; 
+        hydrationDetox = 5;
+        addLog("💧 Hydration boost! Energy gained, toxins flushed.");
+    }
+
     // Toxicity Calculation (Arrival)
     let addedToxicity = 0;
     if (targetCell && targetCell.pesticideLevel > 0) {
@@ -245,8 +254,12 @@ export default function App() {
        addedToxicity = targetCell.pesticideLevel * 15 * intakeFactor; 
     }
 
-    const newEnergy = gameState.player.energy - moveCost - collisionEnergyLoss;
-    const newToxicity = gameState.player.toxicity + addedToxicity;
+    // Final State Calculations
+    let newEnergy = gameState.player.energy - moveCost - collisionEnergyLoss + hydrationEnergy;
+    newEnergy = Math.min(newEnergy, gameState.species.maxEnergy); // Cap at max
+    
+    // Ensure toxicity doesn't drop below zero from hydration
+    const newToxicity = Math.max(0, gameState.player.toxicity + addedToxicity - hydrationDetox);
     
     if (addedToxicity > 2) addLog("Warning: High pesticide levels detected.");
 

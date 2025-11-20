@@ -49,7 +49,7 @@ export const TERRAIN_CONFIG: Record<TerrainType, { color: string, label: string,
   [TerrainType.FOREST]: { color: '#166534', label: 'Ancient Woodland', risk: 'Low', resources: 'Medium' },
   [TerrainType.CROP]: { color: '#eab308', label: 'Mass Flowering Crop', risk: 'High (Pesticides)', resources: 'Abundant (Bonus)' },
   [TerrainType.URBAN]: { color: '#64748b', label: 'Urban Gardens', risk: 'Medium', resources: 'Variable' },
-  [TerrainType.WATER]: { color: '#3b82f6', label: 'Water Body', risk: 'Drowning', resources: 'None' },
+  [TerrainType.WATER]: { color: '#3b82f6', label: 'Water Body', risk: 'Exhaustion Risk', resources: 'Hydration Boost' },
   [TerrainType.ROAD]: { color: '#94a3b8', label: 'Paved Road', risk: 'Medium (Collision)', resources: 'None' },
   [TerrainType.NEST]: { color: '#78350f', label: 'Nest / Shelter', risk: 'None', resources: 'Safe Haven' }
 };
