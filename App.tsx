@@ -5,7 +5,8 @@ import { SpeciesCard } from './components/SpeciesCard';
 import { HexGrid } from './components/HexGrid';
 import { HUD } from './components/HUD';
 import { EventLog } from './components/EventLog';
-import { RotateCcw, ShieldAlert, Trophy, Baby } from 'lucide-react';
+import { TutorialModal } from './components/TutorialModal';
+import { RotateCcw, ShieldAlert, Trophy, Baby, BookOpen } from 'lucide-react';
 
 // --- Helpers ---
 
@@ -111,6 +112,7 @@ const getRandomWeather = (): Weather => {
 // --- Main Component ---
 
 export default function App() {
+  const [showTutorial, setShowTutorial] = useState(false);
   const [gameState, setGameState] = useState<GameState>({
     status: 'MENU',
     day: 1,
@@ -146,6 +148,25 @@ export default function App() {
         history: [{ day: 1, event: `Season begins. Weather is Sunny.` }]
       },
       map: createMap()
+    });
+  };
+
+  const handleExit = () => {
+    setGameState({
+      status: 'MENU',
+      day: 1,
+      weather: Weather.SUNNY,
+      species: null,
+      player: {
+        energy: START_ENERGY,
+        pollen: 0,
+        toxicity: 0,
+        q: 0,
+        r: 0,
+        isAlive: true,
+        history: []
+      },
+      map: new Map()
     });
   };
 
@@ -382,13 +403,23 @@ export default function App() {
   if (gameState.status === 'MENU') {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-slate-900 text-center">
+        <TutorialModal isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
+        
         <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-600 mb-4">
           Pollinator
         </h1>
-        <p className="text-slate-400 max-w-xl mb-12 text-lg">
+        <p className="text-slate-400 max-w-xl mb-8 text-lg">
           Choose your species. Forage for survival. Navigate a fragmented landscape and adapt to survive the season.
         </p>
         
+        <button 
+          onClick={() => setShowTutorial(true)}
+          className="mb-12 flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 px-6 py-3 rounded-full transition-all"
+        >
+          <BookOpen className="w-5 h-5" />
+          How to Play / Field Guide
+        </button>
+
         <div className="flex flex-wrap gap-6 justify-center">
           {Object.values(SPECIES_DATA).map(s => (
             <SpeciesCard key={s.name} species={s} onSelect={startGame} />
@@ -491,6 +522,8 @@ export default function App() {
 
   return (
     <div className="w-full h-full bg-slate-950 relative">
+      <TutorialModal isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
+      
       <HexGrid 
         map={gameState.map} 
         playerQ={gameState.player.q} 
@@ -505,6 +538,8 @@ export default function App() {
         currentHex={gameState.map.get(`${gameState.player.q},${gameState.player.r}`)}
         onForage={handleForage}
         onRest={handleEndTurn}
+        onOpenHelp={() => setShowTutorial(true)}
+        onExit={handleExit}
       />
 
       <EventLog logs={gameState.player.history} />
