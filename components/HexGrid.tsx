@@ -43,7 +43,7 @@ export const HexGrid: React.FC<Props> = ({ map, playerQ, playerR, playerSpecies,
 
   return (
     <div className="w-full h-full flex items-center justify-center overflow-auto bg-slate-950 relative cursor-grab active:cursor-grabbing">
-      <svg width="800" height="600" viewBox="-400 -300 800 600" className="max-w-full max-h-full">
+      <svg width="1000" height="800" viewBox="-500 -400 1000 800" className="max-w-full max-h-full">
         <g>
           {cells.map((cell) => {
             const { x, y } = hexToPixel(cell.q, cell.r);

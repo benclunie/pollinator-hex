@@ -25,10 +25,11 @@ export const HUD: React.FC<Props> = ({ gameState, currentHex, onForage, onRest, 
   const weatherDragOffset = useRef({ x: 0, y: 0 });
   const weatherInitialized = useRef(false);
 
-  // Init Action Panel (Bottom Center)
+  // Init Action Panel (Bottom Left)
   useEffect(() => {
     if (!actionInitialized.current) {
-      setActionPos({ x: (window.innerWidth / 2) - 150, y: window.innerHeight - 180 });
+      // Start near bottom-left, avoiding overlap with edge but clear of center
+      setActionPos({ x: 20, y: window.innerHeight - 320 });
       actionInitialized.current = true;
     }
   }, []);

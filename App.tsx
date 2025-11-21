@@ -372,7 +372,7 @@ export default function App() {
         energyChange = 50; // Significantly increased
         logMsg += "Restored energy in safety of nest.";
     } else {
-        energyChange = 15; // Changed from -5 to +15 to reward rough sleeping
+        energyChange = 25; // Increased energy gain for rough sleeping
         logMsg += "Rested in the open (recovered some energy).";
         if (Math.random() > 0.85) {
              checkDeath(0, gameState.player.toxicity, gameState.species, "Predation during night");
@@ -381,8 +381,6 @@ export default function App() {
     }
 
     const newEnergy = Math.min(gameState.player.energy + energyChange, gameState.species.maxEnergy);
-    
-    // Removed starvation check here as we are now gaining energy in both cases
     
     if (gameState.day >= MAX_DAYS) {
         setGameState(prev => ({ ...prev, status: 'GAME_OVER', player: { ...prev.player, energy: newEnergy } }));
@@ -454,15 +452,15 @@ export default function App() {
 
     if (isHoverfly) {
         successLabel = "Reproductive Success (Eggs)";
-        successValue = Math.floor(gameState.player.pollen / 3); // Assume energy conversion
+        successValue = Math.floor(gameState.player.pollen / 3); // Target ~200
         successSuffix = "Larvae";
     } else if (isSolitary) {
         successLabel = "Nests Provisioned";
-        successValue = Math.floor(gameState.player.pollen / 10);
+        successValue = Math.floor(gameState.player.pollen / 15); // Target ~40
         successSuffix = "Offspring Cells";
     } else if (isBumble) {
         successLabel = "Colony Growth";
-        successValue = Math.floor(gameState.player.pollen / 5);
+        successValue = Math.floor(gameState.player.pollen * 0.6); // Target ~400
         successSuffix = "New Workers";
     }
 
