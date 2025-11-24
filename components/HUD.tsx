@@ -87,8 +87,8 @@ export const HUD: React.FC<Props> = ({ gameState, currentHex, onForage, onRest, 
 
   const terrainInfo = TERRAIN_CONFIG[currentHex.type];
   
-  // Depletion Logic
-  const isDepleted = currentHex.lastForagedDay !== null && (day - currentHex.lastForagedDay) < 4;
+  // Depletion Logic (Updated to 3 days)
+  const isDepleted = currentHex.lastForagedDay !== null && (day - currentHex.lastForagedDay) < 3;
   const canForage = !isDepleted && currentHex.type !== TerrainType.NEST && currentHex.type !== TerrainType.WATER && currentHex.type !== TerrainType.ROAD;
 
   // Dynamic Resource Display
@@ -250,7 +250,7 @@ export const HUD: React.FC<Props> = ({ gameState, currentHex, onForage, onRest, 
                               className={`flex-1 font-bold py-3 rounded-lg shadow-lg transform transition-all flex flex-col items-center justify-center
                                   ${canForage 
                                       ? 'bg-amber-500 hover:bg-amber-400 text-slate-900 hover:scale-105' 
-                                      : 'bg-slate-700 text-slate-500 cursor-not-allowed'}
+                                      : 'bg-slate-700 text-slate-500 cursor-not-allowed grayscale'}
                               `}
                           >
                               <div className="flex items-center gap-2">

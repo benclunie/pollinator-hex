@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { GameState, HexCell, TerrainType, Weather, SpeciesStats, SpeciesType } from './types';
 import { SPECIES_DATA, MAP_RADIUS, MAX_DAYS, START_ENERGY, WEATHER_EFFECTS } from './constants';
@@ -292,9 +291,9 @@ export default function App() {
     const cellKey = `${player.q},${player.r}`;
     const cell = map.get(cellKey);
 
-    // 4-Day Depletion Rule
+    // 3-Day Depletion Rule (Updated from 4)
     if (!cell || cell.type === TerrainType.NEST || cell.type === TerrainType.ROAD) return;
-    if (cell.lastForagedDay !== null && (day - cell.lastForagedDay) < 4) {
+    if (cell.lastForagedDay !== null && (day - cell.lastForagedDay) < 3) {
         addLog("Resource depleted. Needs time to regenerate.");
         return;
     }
@@ -322,7 +321,7 @@ export default function App() {
         // --- HOVERFLY BIO-CONTROL BONUS ---
         if (species.name === SpeciesType.HOVERFLY) {
             bioControlBonus = 15; // Only adds to collection score
-            extraLog = " Bio-control bonus (aphids eaten)!";
+            extraLog = " Bio-control bonus!";
         }
     }
     
@@ -408,8 +407,8 @@ export default function App() {
         // Handle Map Regeneration
         for (const [key, cell] of prev.map) {
              let nextCell = { ...cell };
-             // Reset hasForagedToday (depletion marker) if 4 days passed since last forage
-             if (cell.lastForagedDay !== null && (nextDay - cell.lastForagedDay) >= 4) {
+             // Reset hasForagedToday (depletion marker) if 3 days passed since last forage (Updated from 4)
+             if (cell.lastForagedDay !== null && (nextDay - cell.lastForagedDay) >= 3) {
                  nextCell.hasForagedToday = false;
              }
              newMap.set(key, nextCell);
