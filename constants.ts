@@ -37,7 +37,7 @@ export const SPECIES_DATA: Record<SpeciesType, SpeciesStats> = {
     energyCostMove: 4,
     energyCostForage: 4,
     forageEfficiency: 0.8,
-    pesticideResilience: 0.85, // Increased from 0.7 for higher tolerance
+    pesticideResilience: 0.6, // 
     maxToxicity: 30, // Low max threshold, but fills up very slowly due to resilience
     flightRange: 4,
     traits: ["Bio-Control Agent", "Generalist", "Mobile"]
