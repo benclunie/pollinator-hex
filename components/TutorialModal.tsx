@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { X, Battery, Skull, Flower, Sun, AlertTriangle, Target } from 'lucide-react';
 
@@ -58,6 +57,7 @@ export const TutorialModal: React.FC<Props> = ({ isOpen, onClose }) => {
               <ul className="text-sm space-y-2 list-disc pl-4 text-slate-400">
                 <li><strong>Pesticides:</strong> Accumulate in your body when visiting <span className="text-yellow-500">Crops</span> or <span className="text-slate-400">Urban</span> areas.</li>
                 <li><strong>Lethal Threshold:</strong> Reaching max toxicity causes death.</li>
+                <li><strong>Sub-lethal Effects:</strong> If toxicity exceeds <strong>50%</strong>, you become IMPAIRED. Flight costs increase by 50% and foraging efficiency drops by 25%.</li>
                 <li><strong>Roads:</strong> Crossing roads carries a 25% risk of vehicle collision (massive energy loss).</li>
               </ul>
             </div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { GameState, HexCell, TerrainType, Weather, SpeciesStats, SpeciesType } from './types';
 import { SPECIES_DATA, MAP_RADIUS, MAX_DAYS, START_ENERGY, WEATHER_EFFECTS } from './constants';
@@ -210,7 +209,15 @@ export default function App() {
     if (dist > gameState.species.flightRange) return; 
 
     const weatherCost = WEATHER_EFFECTS[gameState.weather].moveCostMult;
-    const moveCost = gameState.species.energyCostMove * dist * weatherCost;
+    let moveCost = gameState.species.energyCostMove * dist * weatherCost;
+
+    // --- SUB-LETHAL EFFECT: LETHARGY ---
+    const toxicityRatio = gameState.player.toxicity / gameState.species.maxToxicity;
+    let impairmentMsg = "";
+    if (toxicityRatio > 0.5) {
+        moveCost = moveCost * 1.5; // 50% increase in movement cost
+        if (Math.random() > 0.7) impairmentMsg = " (Lethargic flight...)";
+    }
 
     if (gameState.player.energy < moveCost) {
       addLog("Too tired to fly that far!");
@@ -263,7 +270,8 @@ export default function App() {
     // Ensure toxicity doesn't drop below zero from hydration
     const newToxicity = Math.max(0, gameState.player.toxicity + addedToxicity - hydrationDetox);
     
-    if (addedToxicity > 2) addLog("Warning: High pesticide levels detected.");
+    if (addedToxicity > 2) addLog(`Warning: High pesticide levels detected.${impairmentMsg}`);
+    else if (impairmentMsg) addLog(`Movement labored due to toxicity.${impairmentMsg}`);
 
     setGameState(prev => {
       return {
@@ -309,6 +317,14 @@ export default function App() {
     const weatherMult = WEATHER_EFFECTS[weather].resourceMult;
     let baseAmount = cell.resourceQuality * species.forageEfficiency * weatherMult * 0.1; // Scale down
     
+    // --- SUB-LETHAL EFFECT: CONFUSION ---
+    const toxicityRatio = player.toxicity / species.maxToxicity;
+    let impairmentMsg = "";
+    if (toxicityRatio > 0.5) {
+        baseAmount = baseAmount * 0.75; // 25% reduction in yield due to confusion
+        impairmentMsg = " (Clumsy foraging...)";
+    }
+
     // --- CROP YIELD BONUS ---
     let extraLog = "";
     let sugarRushEnergy = 0; // Fixed flat energy bonus
@@ -363,9 +379,9 @@ export default function App() {
 
     // Log message based on species
     if (species.name === SpeciesType.HOVERFLY) {
-         addLog(`Fed on nectar.${toxicityMsg}${extraLog}`);
+         addLog(`Fed on nectar.${toxicityMsg}${extraLog}${impairmentMsg}`);
     } else {
-         addLog(`Collected ${collectedAmount} pollen.${toxicityMsg}${extraLog}`);
+         addLog(`Collected ${collectedAmount} pollen.${toxicityMsg}${extraLog}${impairmentMsg}`);
     }
     
     checkDeath(newEnergy, newToxicity, species, "Starvation");
@@ -562,6 +578,7 @@ export default function App() {
         playerSpecies={gameState.species?.name}
         onHexClick={handleMove}
         playerRange={gameState.species?.flightRange || 0}
+        day={gameState.day}
       />
       
       <HUD 

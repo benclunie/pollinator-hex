@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GameState, HexCell, TerrainType, SpeciesType } from '../types';
 import { WEATHER_EFFECTS, TERRAIN_CONFIG } from '../constants';
-import { Battery, CloudRain, Sun, Cloud, Flower, Skull, Home, Droplets, HelpCircle, GripHorizontal, LogOut, XCircle } from 'lucide-react';
+import { Battery, CloudRain, Sun, Cloud, Flower, Skull, Home, Droplets, HelpCircle, GripHorizontal, LogOut, XCircle, AlertTriangle } from 'lucide-react';
 
 interface Props {
   gameState: GameState;
@@ -98,6 +98,9 @@ export const HUD: React.FC<Props> = ({ gameState, currentHex, onForage, onRest, 
   const resourceColor = isHoverfly ? "text-cyan-400" : "text-pink-400";
   const resourceValueColor = isHoverfly ? "text-cyan-200" : "text-pink-200";
 
+  // Sub-lethal Effect Check
+  const isImpaired = player.toxicity > species.maxToxicity * 0.5;
+
   return (
     <>
       {/* Fixed Stats Panel (Top Left) */}
@@ -136,6 +139,12 @@ export const HUD: React.FC<Props> = ({ gameState, currentHex, onForage, onRest, 
                       style={{ width: `${Math.min(100, (player.toxicity / species.maxToxicity) * 100)}%` }}
                   />
               </div>
+              {isImpaired && (
+                  <div className="flex items-center gap-1 mt-1 justify-end animate-pulse">
+                      <AlertTriangle className="w-3 h-3 text-amber-500" />
+                      <span className="text-[10px] font-bold text-amber-500 uppercase">Impaired</span>
+                  </div>
+              )}
           </div>
 
           {/* Collected Resource */}
