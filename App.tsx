@@ -321,7 +321,7 @@ export default function App() {
         // --- HOVERFLY BIO-CONTROL BONUS ---
         if (species.name === SpeciesType.HOVERFLY) {
             bioControlBonus = 15; // Only adds to collection score
-            extraLog = " Bio-control bonus!";
+            extraLog = " Bio-control bonus (aphids eaten)!";
         }
     }
     
@@ -561,6 +561,7 @@ export default function App() {
         playerSpecies={gameState.species?.name}
         onHexClick={handleMove}
         playerRange={gameState.species?.flightRange || 0}
+        day={gameState.day}
       />
       
       <HUD 
