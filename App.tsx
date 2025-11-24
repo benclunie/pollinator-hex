@@ -51,7 +51,7 @@ const createMap = (): Map<string, HexCell> => {
       map.set(`${q},${r}`, {
         q, r, type,
         isRevealed: q === 0 && r === 0, 
-        hasForagedToday: false,
+        lastForagedDay: null,
         pesticideLevel: 0,
         resourceQuality: Math.floor(Math.random() * 50) + 50 
       });
@@ -286,11 +286,16 @@ export default function App() {
 
   const handleForage = () => {
     if (gameState.status !== 'PLAYING' || !gameState.species) return;
-    const { player, map, species, weather } = gameState;
+    const { player, map, species, weather, day } = gameState;
     const cellKey = `${player.q},${player.r}`;
     const cell = map.get(cellKey);
 
-    if (!cell || cell.hasForagedToday || cell.type === TerrainType.NEST || cell.type === TerrainType.ROAD) return;
+    // 4-Day Depletion Rule
+    if (!cell || cell.type === TerrainType.NEST || cell.type === TerrainType.ROAD) return;
+    if (cell.lastForagedDay !== null && (day - cell.lastForagedDay) < 4) {
+        addLog("Resource depleted. Needs time to regenerate.");
+        return;
+    }
 
     const forageCost = species.energyCostForage;
     if (player.energy < forageCost) {
@@ -308,10 +313,11 @@ export default function App() {
 
     if (cell.type === TerrainType.CROP) {
         amount = amount * 1.5; // 50% Yield Bonus
-        extraEnergy = 5; // "Sugar Rush" from abundant nectar
+        extraEnergy = 5; // "Sugar Rush" from abundant nectar (Generic Crop Bonus)
         extraLog = " High yield crop!";
 
         // --- HOVERFLY BIO-CONTROL BONUS ---
+        // Crucial: Only adds to reproductive SCORE (amount), NOT Energy.
         if (species.name === SpeciesType.HOVERFLY) {
             amount += 15; // Significant bonus
             extraLog = " Bio-control bonus (aphids eaten)!";
@@ -332,7 +338,7 @@ export default function App() {
 
     // Update State
     const newMap = new Map<string, HexCell>(map);
-    newMap.set(cellKey, { ...cell, hasForagedToday: true });
+    newMap.set(cellKey, { ...cell, lastForagedDay: day }); // Mark as depleted
 
     // Energy calc: Cost + Immediate Gain (Nectar) + Sugar Rush (if crop)
     let newEnergy = player.energy - forageCost + (amount * 0.5) + extraEnergy;
@@ -369,10 +375,10 @@ export default function App() {
     let logMsg = "Night falls. ";
 
     if (isAtNest) {
-        energyChange = 50; // Significantly increased
+        energyChange = 40; // Reduced from 50
         logMsg += "Restored energy in safety of nest.";
     } else {
-        energyChange = 25; // Increased energy gain for rough sleeping
+        energyChange = 20; // Reduced from 25
         logMsg += "Rested in the open (recovered some energy).";
         if (Math.random() > 0.85) {
              checkDeath(0, gameState.player.toxicity, gameState.species, "Predation during night");
@@ -389,17 +395,13 @@ export default function App() {
 
     const newWeather = getRandomWeather();
     
+    // Note: We NO LONGER reset hasForagedToday here. Depletion is now permanent for 4 days.
+    
     setGameState(prev => {
-        const newMap = new Map<string, HexCell>(prev.map);
-        for (const [k, v] of newMap) {
-            newMap.set(k, { ...v, hasForagedToday: false });
-        }
-
         return {
             ...prev,
             day: prev.day + 1,
             weather: newWeather,
-            map: newMap,
             player: {
                 ...prev.player,
                 energy: newEnergy,

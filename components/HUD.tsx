@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GameState, HexCell, TerrainType, SpeciesType } from '../types';
 import { WEATHER_EFFECTS, TERRAIN_CONFIG } from '../constants';
-import { Battery, CloudRain, Sun, Cloud, Flower, Skull, Home, Droplets, HelpCircle, GripHorizontal, LogOut } from 'lucide-react';
+import { Battery, CloudRain, Sun, Cloud, Flower, Skull, Home, Droplets, HelpCircle, GripHorizontal, LogOut, XCircle } from 'lucide-react';
 
 interface Props {
   gameState: GameState;
@@ -86,7 +86,10 @@ export const HUD: React.FC<Props> = ({ gameState, currentHex, onForage, onRest, 
   }[weather];
 
   const terrainInfo = TERRAIN_CONFIG[currentHex.type];
-  const canForage = !currentHex.hasForagedToday && currentHex.type !== TerrainType.NEST && currentHex.type !== TerrainType.WATER && currentHex.type !== TerrainType.ROAD;
+  
+  // Depletion Logic
+  const isDepleted = currentHex.lastForagedDay !== null && (day - currentHex.lastForagedDay) < 4;
+  const canForage = !isDepleted && currentHex.type !== TerrainType.NEST && currentHex.type !== TerrainType.WATER && currentHex.type !== TerrainType.ROAD;
 
   // Dynamic Resource Display
   const isHoverfly = species.name === SpeciesType.HOVERFLY;
@@ -247,12 +250,12 @@ export const HUD: React.FC<Props> = ({ gameState, currentHex, onForage, onRest, 
                               className={`flex-1 font-bold py-3 rounded-lg shadow-lg transform transition-all flex flex-col items-center justify-center
                                   ${canForage 
                                       ? 'bg-amber-500 hover:bg-amber-400 text-slate-900 hover:scale-105' 
-                                      : 'bg-slate-700 text-slate-500 cursor-not-allowed grayscale'}
+                                      : 'bg-slate-700 text-slate-500 cursor-not-allowed'}
                               `}
                           >
                               <div className="flex items-center gap-2">
-                                {isHoverfly ? <Droplets className="w-5 h-5" /> : <Flower className="w-5 h-5" />}
-                                <span>{isHoverfly ? "Feed" : "Forage"}</span>
+                                {isDepleted ? <XCircle className="w-5 h-5" /> : (isHoverfly ? <Droplets className="w-5 h-5" /> : <Flower className="w-5 h-5" />)}
+                                <span>{isDepleted ? "Empty" : (isHoverfly ? "Feed" : "Forage")}</span>
                               </div>
                           </button>
                           

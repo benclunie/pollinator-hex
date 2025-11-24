@@ -38,7 +38,7 @@ export interface HexCell {
   r: number;
   type: TerrainType;
   isRevealed: boolean;
-  hasForagedToday: boolean;
+  lastForagedDay: number | null; // Changed from boolean to track depletion
   pesticideLevel: number; // 0-1
   resourceQuality: number; // 0-100
 }
