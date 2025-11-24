@@ -1,3 +1,4 @@
+
 export enum TerrainType {
   MEADOW = 'MEADOW',
   FOREST = 'FOREST',
@@ -38,7 +39,8 @@ export interface HexCell {
   r: number;
   type: TerrainType;
   isRevealed: boolean;
-  lastForagedDay: number | null; // Changed from boolean to track depletion
+  hasForagedToday: boolean;
+  lastForagedDay: number | null;
   pesticideLevel: number; // 0-1
   resourceQuality: number; // 0-100
 }

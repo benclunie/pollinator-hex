@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { GameState, HexCell, TerrainType, Weather, SpeciesStats, SpeciesType } from './types';
 import { SPECIES_DATA, MAP_RADIUS, MAX_DAYS, START_ENERGY, WEATHER_EFFECTS } from './constants';
@@ -51,6 +52,7 @@ const createMap = (): Map<string, HexCell> => {
       map.set(`${q},${r}`, {
         q, r, type,
         isRevealed: q === 0 && r === 0, 
+        hasForagedToday: false,
         lastForagedDay: null,
         pesticideLevel: 0,
         resourceQuality: Math.floor(Math.random() * 50) + 50 
@@ -305,26 +307,26 @@ export default function App() {
 
     // Resource Calculation
     const weatherMult = WEATHER_EFFECTS[weather].resourceMult;
-    let amount = cell.resourceQuality * species.forageEfficiency * weatherMult * 0.1; // Scale down
+    let baseAmount = cell.resourceQuality * species.forageEfficiency * weatherMult * 0.1; // Scale down
     
     // --- CROP YIELD BONUS ---
     let extraLog = "";
-    let extraEnergy = 0;
+    let sugarRushEnergy = 0; // Fixed flat energy bonus
+    let bioControlBonus = 0; // Only for score
 
     if (cell.type === TerrainType.CROP) {
-        amount = amount * 1.5; // 50% Yield Bonus
-        extraEnergy = 5; // "Sugar Rush" from abundant nectar (Generic Crop Bonus)
+        baseAmount = baseAmount * 1.5; // 50% Yield Bonus (applies to both energy and score)
+        sugarRushEnergy = 5; // "Sugar Rush"
         extraLog = " High yield crop!";
 
         // --- HOVERFLY BIO-CONTROL BONUS ---
-        // Crucial: Only adds to reproductive SCORE (amount), NOT Energy.
         if (species.name === SpeciesType.HOVERFLY) {
-            amount += 15; // Significant bonus
+            bioControlBonus = 15; // Only adds to collection score
             extraLog = " Bio-control bonus (aphids eaten)!";
         }
     }
     
-    amount = Math.floor(amount);
+    baseAmount = Math.floor(baseAmount);
 
     // Toxicity Calculation (Foraging/Ingestion)
     let addedToxicity = 0;
@@ -338,12 +340,16 @@ export default function App() {
 
     // Update State
     const newMap = new Map<string, HexCell>(map);
-    newMap.set(cellKey, { ...cell, lastForagedDay: day }); // Mark as depleted
+    newMap.set(cellKey, { ...cell, lastForagedDay: day, hasForagedToday: true }); // Mark as depleted for today/near future
 
-    // Energy calc: Cost + Immediate Gain (Nectar) + Sugar Rush (if crop)
-    let newEnergy = player.energy - forageCost + (amount * 0.5) + extraEnergy;
+    // Energy calc: Cost + Immediate Gain (Base Nectar only) + Sugar Rush
+    // IMPORTANT: We do NOT add bioControlBonus to energy, only baseAmount
+    let newEnergy = player.energy - forageCost + (baseAmount * 0.5) + sugarRushEnergy;
     newEnergy = Math.min(newEnergy, species.maxEnergy);
     const newToxicity = player.toxicity + addedToxicity;
+
+    // Score calc: Base + BioControl
+    const collectedAmount = baseAmount + bioControlBonus;
 
     setGameState(prev => ({
       ...prev,
@@ -351,7 +357,7 @@ export default function App() {
       player: {
         ...prev.player,
         energy: newEnergy,
-        pollen: prev.player.pollen + amount, // 'pollen' tracks general resource success
+        pollen: prev.player.pollen + collectedAmount, // 'pollen' tracks general resource success
         toxicity: newToxicity
       }
     }));
@@ -360,7 +366,7 @@ export default function App() {
     if (species.name === SpeciesType.HOVERFLY) {
          addLog(`Fed on nectar.${toxicityMsg}${extraLog}`);
     } else {
-         addLog(`Collected ${amount} pollen.${toxicityMsg}${extraLog}`);
+         addLog(`Collected ${collectedAmount} pollen.${toxicityMsg}${extraLog}`);
     }
     
     checkDeath(newEnergy, newToxicity, species, "Starvation");
@@ -375,10 +381,10 @@ export default function App() {
     let logMsg = "Night falls. ";
 
     if (isAtNest) {
-        energyChange = 40; // Reduced from 50
+        energyChange = 40; 
         logMsg += "Restored energy in safety of nest.";
     } else {
-        energyChange = 20; // Reduced from 25
+        energyChange = 20; 
         logMsg += "Rested in the open (recovered some energy).";
         if (Math.random() > 0.85) {
              checkDeath(0, gameState.player.toxicity, gameState.species, "Predation during night");
@@ -395,17 +401,29 @@ export default function App() {
 
     const newWeather = getRandomWeather();
     
-    // Note: We NO LONGER reset hasForagedToday here. Depletion is now permanent for 4 days.
-    
     setGameState(prev => {
+        const nextDay = prev.day + 1;
+        const newMap = new Map<string, HexCell>();
+        
+        // Handle Map Regeneration
+        for (const [key, cell] of prev.map) {
+             let nextCell = { ...cell };
+             // Reset hasForagedToday (depletion marker) if 4 days passed since last forage
+             if (cell.lastForagedDay !== null && (nextDay - cell.lastForagedDay) >= 4) {
+                 nextCell.hasForagedToday = false;
+             }
+             newMap.set(key, nextCell);
+        }
+
         return {
             ...prev,
-            day: prev.day + 1,
+            day: nextDay,
             weather: newWeather,
+            map: newMap,
             player: {
                 ...prev.player,
                 energy: newEnergy,
-                history: [...prev.player.history, { day: prev.day, event: logMsg }, { day: prev.day + 1, event: `Day ${prev.day + 1}: ${newWeather} weather.` }]
+                history: [...prev.player.history, { day: prev.day, event: logMsg }, { day: nextDay, event: `Day ${nextDay}: ${newWeather} weather.` }]
             }
         };
     });
