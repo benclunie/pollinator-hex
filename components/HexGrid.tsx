@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { HexCell, TerrainType, SpeciesType } from '../types';
 import { HEX_SIZE, TERRAIN_CONFIG } from '../constants';
@@ -13,18 +12,17 @@ interface Props {
   playerSpecies?: SpeciesType;
   onHexClick: (q: number, r: number) => void;
   playerRange: number;
+  day: number; // Added day property to fix the build error
 }
 
-export const HexGrid: React.FC<Props> = ({ map, playerQ, playerR, playerSpecies, onHexClick, playerRange }) => {
+export const HexGrid: React.FC<Props> = ({ map, playerQ, playerR, playerSpecies, onHexClick, playerRange, day }) => {
   
-  // Helper to convert axial to pixel
   const hexToPixel = (q: number, r: number) => {
     const x = HEX_SIZE * (3 / 2) * q;
     const y = HEX_SIZE * Math.sqrt(3) * (r + q / 2);
     return { x, y };
   };
 
-  // Hexagon points string
   const hexPoints = useMemo(() => {
     const points = [];
     for (let i = 0; i < 6; i++) {
@@ -35,7 +33,6 @@ export const HexGrid: React.FC<Props> = ({ map, playerQ, playerR, playerSpecies,
     return points.join(' ');
   }, []);
 
-  // Calculate distance for valid moves highlight
   const getDistance = (q1: number, r1: number, q2: number, r2: number) => {
     return (Math.abs(q1 - q2) + Math.abs(q1 + r1 - q2 - r2) + Math.abs(r1 - r2)) / 2;
   };
@@ -53,17 +50,18 @@ export const HexGrid: React.FC<Props> = ({ map, playerQ, playerR, playerSpecies,
             const isPlayer = cell.q === playerQ && cell.r === playerR;
             const isRevealed = cell.isRevealed;
             
-            // Determine fill color
-            let fill = '#1e293b'; // Default slate-800 (fog)
+            let fill = '#1e293b'; 
             if (isRevealed) {
                 fill = TERRAIN_CONFIG[cell.type].color;
             } else if (inRange) {
-                fill = '#334155'; // Slightly lighter fog if reachable
+                fill = '#334155'; 
             }
 
-            // Opacity for fog
             const opacity = isRevealed ? 1 : 0.4;
             const stroke = isRevealed ? '#0f172a' : '#334155';
+
+            // Depletion visual logic (3 Day Rule)
+            const isDepleted = cell.lastForagedDay !== null && (day - cell.lastForagedDay) < 3;
 
             return (
               <g 
@@ -81,13 +79,10 @@ export const HexGrid: React.FC<Props> = ({ map, playerQ, playerR, playerSpecies,
                   fillOpacity={opacity}
                 />
                 
-                {/* Terrain Icon / Indicator */}
-                {/* Hide Nest icon if player is on it to avoid overlap */}
                 {isRevealed && cell.type === TerrainType.NEST && !isPlayer && (
                    <Home x="-12" y="-12" width="24" height="24" className="text-white drop-shadow-md" strokeWidth={2} />
                 )}
                 
-                {/* Player Icon */}
                 {isPlayer && (
                   <foreignObject x="-15" y="-15" width="30" height="30">
                      <div className="w-full h-full flex items-center justify-center text-white drop-shadow-lg animate-pulse">
@@ -101,12 +96,10 @@ export const HexGrid: React.FC<Props> = ({ map, playerQ, playerR, playerSpecies,
                 )}
 
                 {/* Resource Indicator (White Dot) */}
-                {/* Use lastForagedDay === null to determine if resource is fresh/regenerated */}
-                {isRevealed && cell.lastForagedDay === null && cell.type !== TerrainType.NEST && cell.type !== TerrainType.WATER && cell.type !== TerrainType.ROAD && (
+                {isRevealed && !isDepleted && cell.type !== TerrainType.NEST && cell.type !== TerrainType.WATER && cell.type !== TerrainType.ROAD && (
                     <circle cx="0" cy="0" r="4" fill="white" opacity="0.7" />
                 )}
                 
-                {/* Range Hint */}
                 {inRange && !isRevealed && (
                      <circle cx="0" cy="0" r="2" fill="#fbbf24" opacity="0.5" />
                 )}
@@ -115,8 +108,6 @@ export const HexGrid: React.FC<Props> = ({ map, playerQ, playerR, playerSpecies,
           })}
         </g>
       </svg>
-      
-      {/* Fog Legend / Overlay Hint */}
       <div className="absolute bottom-4 left-4 text-xs text-slate-500 pointer-events-none">
         Grid System: Axial Coordinates
       </div>
