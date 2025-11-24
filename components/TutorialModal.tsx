@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { X, Battery, Skull, Flower, Sun, AlertTriangle, Target } from 'lucide-react';
 
@@ -46,7 +47,7 @@ export const TutorialModal: React.FC<Props> = ({ isOpen, onClose }) => {
               <ul className="text-sm space-y-2 list-disc pl-4 text-slate-400">
                 <li><strong>Movement:</strong> Flying costs energy based on distance.</li>
                 <li><strong>Foraging:</strong> Costs energy but yields resources.</li>
-                <li><strong>Resting:</strong> Returning to the <span className="text-emerald-400">Nest</span> restores significant energy (+50). Sleeping outside restores little (+15) and risks predation.</li>
+                <li><strong>Resting:</strong> Returning to the <span className="text-emerald-400">Nest</span> restores significant energy (+40). Sleeping outside restores less (+20) and risks predation.</li>
               </ul>
             </div>
 
@@ -87,7 +88,7 @@ export const TutorialModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 </div>
                  <div className="flex gap-3 items-start">
                     <span className="bg-amber-900/40 text-amber-600 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1 min-w-[60px] text-center">NEST</span>
-                    <p>Your home. No resources, but allows for full energy recovery (+50).</p>
+                    <p>Your home. No resources, but allows for full energy recovery (+40).</p>
                 </div>
                 <div className="flex gap-3 items-start">
                     <span className="bg-blue-900/40 text-blue-400 px-2 py-1 rounded text-xs font-bold whitespace-nowrap mt-1 min-w-[60px] text-center">WATER</span>

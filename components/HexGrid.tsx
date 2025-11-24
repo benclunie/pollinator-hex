@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { HexCell, TerrainType, SpeciesType } from '../types';
 import { HEX_SIZE, TERRAIN_CONFIG } from '../constants';
@@ -12,10 +13,9 @@ interface Props {
   playerSpecies?: SpeciesType;
   onHexClick: (q: number, r: number) => void;
   playerRange: number;
-  day: number; // Added day to calculate depletion visuals accurately
 }
 
-export const HexGrid: React.FC<Props> = ({ map, playerQ, playerR, playerSpecies, onHexClick, playerRange, day }) => {
+export const HexGrid: React.FC<Props> = ({ map, playerQ, playerR, playerSpecies, onHexClick, playerRange }) => {
   
   // Helper to convert axial to pixel
   const hexToPixel = (q: number, r: number) => {
@@ -65,9 +65,6 @@ export const HexGrid: React.FC<Props> = ({ map, playerQ, playerR, playerSpecies,
             const opacity = isRevealed ? 1 : 0.4;
             const stroke = isRevealed ? '#0f172a' : '#334155';
 
-            // Depletion visual logic (3 Day Rule)
-            const isDepleted = cell.lastForagedDay !== null && (day - cell.lastForagedDay) < 3;
-
             return (
               <g 
                 key={`${cell.q},${cell.r}`} 
@@ -104,8 +101,8 @@ export const HexGrid: React.FC<Props> = ({ map, playerQ, playerR, playerSpecies,
                 )}
 
                 {/* Resource Indicator (White Dot) */}
-                {/* Only show if Revealed, Not Depleted (using dynamic day logic), and valid terrain */}
-                {isRevealed && !isDepleted && cell.type !== TerrainType.NEST && cell.type !== TerrainType.WATER && cell.type !== TerrainType.ROAD && (
+                {/* Use lastForagedDay === null to determine if resource is fresh/regenerated */}
+                {isRevealed && cell.lastForagedDay === null && cell.type !== TerrainType.NEST && cell.type !== TerrainType.WATER && cell.type !== TerrainType.ROAD && (
                     <circle cx="0" cy="0" r="4" fill="white" opacity="0.7" />
                 )}
                 

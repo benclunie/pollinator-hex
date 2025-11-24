@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { GameState, HexCell, TerrainType, Weather, SpeciesStats, SpeciesType } from './types';
 import { SPECIES_DATA, MAP_RADIUS, MAX_DAYS, START_ENERGY, WEATHER_EFFECTS } from './constants';
@@ -291,7 +292,7 @@ export default function App() {
     const cellKey = `${player.q},${player.r}`;
     const cell = map.get(cellKey);
 
-    // 3-Day Depletion Rule (Updated from 4)
+    // 3-Day Depletion Rule
     if (!cell || cell.type === TerrainType.NEST || cell.type === TerrainType.ROAD) return;
     if (cell.lastForagedDay !== null && (day - cell.lastForagedDay) < 3) {
         addLog("Resource depleted. Needs time to regenerate.");
@@ -342,7 +343,6 @@ export default function App() {
     newMap.set(cellKey, { ...cell, lastForagedDay: day, hasForagedToday: true }); // Mark as depleted for today/near future
 
     // Energy calc: Cost + Immediate Gain (Base Nectar only) + Sugar Rush
-    // IMPORTANT: We do NOT add bioControlBonus to energy, only baseAmount
     let newEnergy = player.energy - forageCost + (baseAmount * 0.5) + sugarRushEnergy;
     newEnergy = Math.min(newEnergy, species.maxEnergy);
     const newToxicity = player.toxicity + addedToxicity;
@@ -407,9 +407,10 @@ export default function App() {
         // Handle Map Regeneration
         for (const [key, cell] of prev.map) {
              let nextCell = { ...cell };
-             // Reset hasForagedToday (depletion marker) if 3 days passed since last forage (Updated from 4)
+             // Reset state (depletion marker) if 3 days passed since last forage
              if (cell.lastForagedDay !== null && (nextDay - cell.lastForagedDay) >= 3) {
                  nextCell.hasForagedToday = false;
+                 nextCell.lastForagedDay = null; // Reset to null so visually the dot returns
              }
              newMap.set(key, nextCell);
         }
@@ -561,7 +562,6 @@ export default function App() {
         playerSpecies={gameState.species?.name}
         onHexClick={handleMove}
         playerRange={gameState.species?.flightRange || 0}
-        day={gameState.day}
       />
       
       <HUD 
