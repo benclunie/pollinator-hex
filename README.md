@@ -1,5 +1,9 @@
 # Pollinator: Ecology & Evolution
-  
+
+<p align="center">
+  <img src="pollinator_hex.svg" alt="Pollinator Hex" width="400">
+</p>
+
   <h3>Interactive Ecological Simulation for Biosciences Undergraduates</h3>
 </div>
 
