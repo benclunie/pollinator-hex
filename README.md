@@ -1,20 +1,47 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+# Pollinator: Ecology & Evolution
+  
+  <h3>Interactive Ecological Simulation for Biosciences Undergraduates</h3>
 </div>
 
-# Run and deploy your AI Studio app
+## Overview
 
-This contains everything you need to run your app locally.
+**Pollinator** is a turn-based strategy simulation designed for second-year biosciences students. Players assume the role of a pollinator species (Bumblebee, Solitary Bee, or Hoverfly) and must navigate a fragmented, semi-realistic landscape to survive a 15 'day' season.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1rNB0OPL68G6DoTghkQnfOhfibhv6teCl
+The core learning focus involve understanding:
+*   **Evolutionary Trade-offs:** Energy expenditure vs. resource gain.
+*   **Foraging Strategies:** Central-place foraging (bees) vs. wandering (flies).
+*   **Landscape Ecology:** The impact of habitat fragmentation, roads, and agricultural intensification.
 
-## Run Locally
+## Gameplay Mechanics
 
-**Prerequisites:**  Node.js
+### 1. Species Selection
+Each species has distinct physiological traits:
+*   **Bumblebee:** High energy capacity, cold tolerant, social (needs massive resources for colony).
+*   **Solitary Bee:** Efficient, short-range, central-place forager.
+*   **Hoverfly:** Mimic, highly mobile, generalist. Larvae provide bio-control services.
 
+### 2. The Landscape
+The map is a procedurally generated hexagonal grid containing:
+*   **Meadows/Forests:** Safe, moderate resources.
+*   **Crops:** High yield ("Sugar Rush" energy bonus) but high pesticide risk.
+*   **Urban/Roads:** Resource-poor, high toxicity or collision risk.
+*   **Water:** Provides hydration (energy boost + detox) but no food.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### 3. Survival Logic
+*   **Energy Budget:** Movement and foraging cost energy. Resting recovers it. Running out means death.
+*   **Toxicity:** Accumulates from pesticide exposure. Reaching the threshold is lethal. Sub-lethal effects (>50%) cause movement lethargy and foraging confusion.
+*   **Resource Depletion:** Flowers take **3 days** to replenish nectar after being visited.
+
+## Installation & Development
+
+This project uses **React**, **Vite**, and **TypeScript**.
+
+## Deployment
+
+The project is configured for automatic deployment to **GitHub Pages** via GitHub Actions.
+*   Push to `main` triggers a build.
+*   The site is served from the `gh-pages` branch.
+
+---
+
+*Designed for the Insect Ecology & Evolution Module for Harper Adams University Zoology Undergraduates.*
