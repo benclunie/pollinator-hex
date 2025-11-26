@@ -1,4 +1,4 @@
-# Pollinator: Ecology & Evolution
+# Pollinator Hex: Ecology & Evolution
 
 <p align="center">
   <img src="pollinator_hex.svg" alt="Pollinator Hex" width="400">
@@ -9,12 +9,16 @@
 
 ## Overview
 
-**Pollinator** is a turn-based strategy simulation designed for second-year biosciences students. Players assume the role of a pollinator species (Bumblebee, Solitary Bee, or Hoverfly) and must navigate a fragmented, semi-realistic landscape to survive a 15 'day' season.
+**Pollinator Hex** is a turn-based strategy simulation designed for second-year biosciences students. Players assume the role of a pollinator species (Bumblebee, Solitary Bee, or Hoverfly) and must navigate a fragmented, semi-realistic landscape to survive a 15 'day' season.
 
 The core learning focus involve understanding:
 *   **Evolutionary Trade-offs:** Energy expenditure vs. resource gain.
 *   **Foraging Strategies:** Central-place foraging (bees) vs. wandering (flies).
 *   **Landscape Ecology:** The impact of habitat fragmentation, roads, and agricultural intensification.
+
+## Game link:
+
+https://benclunie.github.io/pollinator-hex/
 
 ## Gameplay Mechanics
 
